@@ -69,15 +69,21 @@ export const profileConfig: ProfileConfig = {
 		//                                     // `pnpm add @iconify-json/<icon-set-name>`
 		//   url: 'https://twitter.com',
 		// },
-		// {
-		//   name: 'Steam',
-		//   icon: 'fa6-brands:steam',
-		//   url: 'https://store.steampowered.com',
-		// },
+
 		{
 			name: "GitHub",
 			icon: "fa6-brands:github",
 			url: "https://github.com/ZheYi101",
+		},
+		{
+			name: "Steam",
+			icon: "fa6-brands:steam",
+			url: "https://steamcommunity.com/profiles/76561198947256485",
+		},
+		{
+			name: "QQ",
+			icon: "fa6-brands:qq",
+			url: "https://user.qzone.qq.com/2332876536",
 		},
 	],
 };
