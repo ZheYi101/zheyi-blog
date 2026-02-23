@@ -83,7 +83,7 @@ export const profileConfig: ProfileConfig = {
 		{
 			name: "QQ",
 			icon: "fa6-brands:qq",
-			url: "https://user.qzone.qq.com/2332876536",
+			url: "https://qm.qq.com/q/GD6As3bp06",
 		},
 	],
 };
