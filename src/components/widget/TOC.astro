@@ -6,6 +6,7 @@ import { url } from "../../utils/url-utils";
 interface Props {
 	class?: string;
 	headings: MarkdownHeading[];
+	locale: import("@/types/config").Locale;
 }
 
 let { headings = [] } = Astro.props;

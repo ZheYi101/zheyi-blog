@@ -5,10 +5,11 @@ import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getSortedPostsList } from "../utils/content-utils";
 
-const sortedPostsList = await getSortedPostsList();
+const locale = "zh" as const;
+const sortedPostsList = await getSortedPostsList(locale);
 ---
 
-<MainGridLayout title={i18n(I18nKey.archive)}>
-    <ArchivePanel sortedPosts={sortedPostsList} client:only="svelte"></ArchivePanel>
+<MainGridLayout title={i18n(locale, I18nKey.archive)} locale={locale} localeSwitchUrl="/en/archive/">
+    <ArchivePanel sortedPosts={sortedPostsList} locale={locale} client:only="svelte"></ArchivePanel>
 </MainGridLayout>
 

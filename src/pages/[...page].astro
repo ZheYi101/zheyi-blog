@@ -7,17 +7,18 @@ import MainGridLayout from "../layouts/MainGridLayout.astro";
 import { getSortedPosts } from "../utils/content-utils";
 
 export const getStaticPaths = (async ({ paginate }) => {
-	const allBlogPosts = await getSortedPosts();
-	return paginate(allBlogPosts, { pageSize: PAGE_SIZE });
+	const locale = "zh" as const;
+	const allBlogPosts = await getSortedPosts(locale);
+	return paginate(allBlogPosts, { pageSize: PAGE_SIZE, props: { locale } });
 }) satisfies GetStaticPaths;
 // https://github.com/withastro/astro/issues/6507#issuecomment-1489916992
 
-const { page } = Astro.props;
+const { page, locale } = Astro.props;
 
 const len = page.data.length;
 ---
 
-<MainGridLayout>
-    <PostPage page={page}></PostPage>
-    <Pagination class="mx-auto onload-animation" page={page} style={`animation-delay: calc(var(--content-delay) + ${(len)*50}ms)`}></Pagination>
+<MainGridLayout locale={locale} localeSwitchUrl="/en/">
+    <PostPage page={page} locale={locale}></PostPage>
+    <Pagination class="mx-auto onload-animation" page={page} locale={locale} style={`animation-delay: calc(var(--content-delay) + ${len * 50}ms)`}></Pagination>
 </MainGridLayout>

@@ -6,6 +6,8 @@ import { i18n } from "@i18n/translation";
 import { Icon } from "astro-icon/components";
 import MainGridLayout from "../layouts/MainGridLayout.astro";
 
+const locale = "zh" as const;
+
 const friendLink = [
 	{
 		name: "dumbdaidai",
@@ -39,7 +41,7 @@ const friendLink = [
 	},
 ];
 ---
-<MainGridLayout title={i18n(I18nKey.friendLink)} description={i18n(I18nKey.friendLink)}>
+<MainGridLayout title={i18n(locale, I18nKey.friendLink)} description={i18n(locale, I18nKey.friendLink)} locale={locale} localeSwitchUrl="/en/friendLink/">
     <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32">
         <div class="card-base z-10 px-9 py-6 relative w-full ">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-8 my-4">
@@ -61,18 +63,6 @@ const friendLink = [
                         <div class="grow w-full">
                             <div class="font-bold transition text-lg text-neutral-900 dark:text-neutral-100 mb-1">{item.name}</div>
                             <div class="text-50 text-sm font-medium whitespace-pre-wrap">{item.description}</div>
-                            {/* <div class:list={["items-center", {"flex": true, "hidden md:flex" : false}]}>
-                                <div class="flex flex-row flex-nowrap items-center">
-                                    {(item.tags && item.tags.length > 0) && item.tags.map((tag,i) => (
-                                        <div class:list={[{"hidden": i==0}, "mx-1.5 text-[var(--meta-divider)] text-sm" ]}>
-                                            /
-                                        </div>
-                                        <span class="transition text-50 text-sm font-medium">
-                                    {tag}
-                                </span>))}
-                                    {!(item.tags && item.tags.length > 0) && <div class="transition text-50 text-sm font-medium">{i18n(I18nKey.noTags)}</div>}
-                                </div>
-                            </div> */}
                         </div>
                         <a href={item.url} target="_blank" rel="noopener noreferrer"class="flex btn-regular w-[3.25rem] rounded-lg bg-[var(--enter-btn-bg)] hover:bg-[var(--enter-btn-bg-hover)] active:bg-[var(--enter-btn-bg-active)] active:scale-95">
                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="transition text-[var(--primary)] text-4xl mx-auto iconify iconify--material-symbols" width="1em" height="1em" viewBox="0 0 24 24">

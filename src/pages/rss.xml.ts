@@ -1,10 +1,11 @@
 import rss from "@astrojs/rss";
+import { siteConfig } from "@/config";
+import type { Locale } from "@/types/config";
 import { getSortedPosts } from "@utils/content-utils";
-import { url } from "@utils/url-utils";
+import { getPostUrlBySlug } from "@utils/url-utils";
 import type { APIContext } from "astro";
 import MarkdownIt from "markdown-it";
 import sanitizeHtml from "sanitize-html";
-import { siteConfig } from "@/config";
 
 const parser = new MarkdownIt();
 
@@ -16,8 +17,9 @@ function stripInvalidXmlChars(str: string): string {
 	);
 }
 
-export async function GET(context: APIContext) {
-	const blog = await getSortedPosts();
+export async function GET(context: APIContext): Promise<Response> {
+	const locale: Locale = "zh";
+	const blog = await getSortedPosts(locale);
 
 	return rss({
 		title: siteConfig.title,
@@ -31,7 +33,7 @@ export async function GET(context: APIContext) {
 				title: post.data.title,
 				pubDate: post.data.published,
 				description: post.data.description || "",
-				link: url(`/posts/${post.slug}/`),
+				link: getPostUrlBySlug(post.slug, locale),
 				content: sanitizeHtml(parser.render(cleanedContent), {
 					allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img"]),
 				}),

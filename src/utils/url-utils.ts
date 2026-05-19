@@ -1,5 +1,5 @@
-import I18nKey from "@i18n/i18nKey";
-import { i18n } from "@i18n/translation";
+import type { Locale } from "@/types/config";
+import type { CategoryKey } from "@utils/content-utils";
 
 export function pathsEqual(path1: string, path2: string): boolean {
 	const normalizedPath1 = path1.replace(/^\/|\/$/g, "").toLowerCase();
@@ -12,23 +12,51 @@ function joinUrl(...parts: string[]): string {
 	return joined.replace(/\/+/g, "/");
 }
 
-export function getPostUrlBySlug(slug: string): string {
-	return url(`/posts/${slug}/`);
+export function localeToPrefix(locale: Locale): string {
+	return locale === "en" ? "/en" : "";
 }
 
-export function getTagUrl(tag: string): string {
-	if (!tag) return url("/archive/");
-	return url(`/archive/?tag=${encodeURIComponent(tag.trim())}`);
+export function getLocaleFromPathname(pathname: string): Locale {
+	return pathname === "/en" || pathname.startsWith("/en/") ? "en" : "zh";
 }
 
-export function getCategoryUrl(category: string | null): string {
-	if (
-		!category ||
-		category.trim() === "" ||
-		category.trim().toLowerCase() === i18n(I18nKey.uncategorized).toLowerCase()
-	)
-		return url("/archive/?uncategorized=true");
-	return url(`/archive/?category=${encodeURIComponent(category.trim())}`);
+export function getHomeUrl(locale: Locale): string {
+	return url(`${localeToPrefix(locale)}/`);
+}
+
+export function getPostUrlBySlug(slug: string, locale: Locale): string {
+	return url(`${localeToPrefix(locale)}/posts/${slug}/`);
+}
+
+export function getArchiveUrl(locale: Locale): string {
+	return url(`${localeToPrefix(locale)}/archive/`);
+}
+
+export function getAboutUrl(locale: Locale): string {
+	return url(`${localeToPrefix(locale)}/about/`);
+}
+
+export function getFriendLinkUrl(locale: Locale): string {
+	return url(`${localeToPrefix(locale)}/friendLink/`);
+}
+
+export function getTagUrl(tag: string, locale: Locale): string {
+	if (!tag) return getArchiveUrl(locale);
+	return url(
+		`${localeToPrefix(locale)}/archive/?tag=${encodeURIComponent(tag.trim())}`,
+	);
+}
+
+export function getCategoryUrl(
+	categoryKey: CategoryKey | null,
+	locale: Locale,
+): string {
+	if (!categoryKey) {
+		return url(`${localeToPrefix(locale)}/archive/?uncategorized=true`);
+	}
+	return url(
+		`${localeToPrefix(locale)}/archive/?category=${encodeURIComponent(categoryKey)}`,
+	);
 }
 
 export function getDir(path: string): string {

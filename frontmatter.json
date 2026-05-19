@@ -52,9 +52,24 @@
           "type": "string"
         },
         {
+          "title": "categoryKey",
+          "name": "categoryKey",
+          "type": "string"
+        },
+        {
           "title": "draft",
           "name": "draft",
           "type": "boolean"
+        },
+        {
+          "title": "locale",
+          "name": "locale",
+          "type": "string"
+        },
+        {
+          "title": "translationKey",
+          "name": "translationKey",
+          "type": "string"
         },
         {
           "title": "language",

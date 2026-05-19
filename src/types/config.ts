@@ -1,5 +1,7 @@
 import type { AUTO_MODE, DARK_MODE, LIGHT_MODE } from "@constants/constants";
 
+export type Locale = "zh" | "en";
+
 export type SiteConfig = {
 	title: string;
 	subtitle: string;
@@ -86,6 +88,10 @@ export type BlogPostData = {
 	draft?: boolean;
 	image?: string;
 	category?: string;
+	categoryKey?: string;
+	locale?: Locale;
+	translationKey?: string;
+	lang?: string;
 	prevTitle?: string;
 	prevSlug?: string;
 	nextTitle?: string;

@@ -1,7 +1,10 @@
 ---
 
+import type { Locale } from "@/types/config";
 import { siteConfig } from "../config";
+
+const locale = (Astro.props.locale || "zh") as Locale;
 ---
 
-<div id="config-carrier" data-hue={siteConfig.themeColor.hue} data-lightDarkMode={siteConfig.lightDarkMode.defaultMode}>
+<div id="config-carrier" data-hue={siteConfig.themeColor.hue} data-lightDarkMode={siteConfig.lightDarkMode.defaultMode} data-locale={locale}>
 </div>

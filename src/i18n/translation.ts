@@ -1,4 +1,5 @@
 import { siteConfig } from "../config";
+import type { Locale } from "../types/config";
 import type I18nKey from "./i18nKey";
 import { en } from "./languages/en";
 import { es } from "./languages/es";
@@ -42,7 +43,16 @@ export function getTranslation(lang: string): Translation {
 	return map[lang.toLowerCase()] || defaultTranslation;
 }
 
-export function i18n(key: I18nKey): string {
-	const lang = siteConfig.lang || "en";
+export function normalizeLocale(lang?: string | null): Locale {
+	const normalized = (lang || siteConfig.lang || "zh_CN").toLowerCase();
+	return normalized.startsWith("zh") ? "zh" : "en";
+}
+
+export function getHtmlLang(locale: Locale): string {
+	return locale === "zh" ? "zh-CN" : "en";
+}
+
+export function i18n(locale: Locale, key: I18nKey): string {
+	const lang = locale === "zh" ? "zh_CN" : "en";
 	return getTranslation(lang)[key];
 }
