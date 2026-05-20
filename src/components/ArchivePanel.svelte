@@ -1,11 +1,12 @@
 <script lang="ts">
 import { onMount } from "svelte";
 
-import I18nKey from "../i18n/i18nKey";
-import { getDefaultLocale } from "../utils/setting-utils";
-import { i18n } from "../i18n/translation";
-import { getPostUrlBySlug } from "../utils/url-utils";
 import type { Locale } from "@/types/config";
+import I18nKey from "../i18n/i18nKey";
+import { i18n } from "../i18n/translation";
+import { getDefaultLocale } from "../utils/setting-utils";
+import { normalizeTagKey } from "../utils/tag-utils";
+import { getPostUrlBySlug } from "../utils/url-utils";
 
 export let tags: string[];
 export let categories: string[];
@@ -13,7 +14,7 @@ export let sortedPosts: Post[] = [];
 export let locale: Locale = getDefaultLocale();
 
 const params = new URLSearchParams(window.location.search);
-tags = params.has("tag") ? params.getAll("tag") : [];
+tags = params.has("tag") ? params.getAll("tag").map((tag) => normalizeTagKey(tag)) : [];
 categories = params.has("category") ? params.getAll("category") : [];
 const uncategorized = params.get("uncategorized");
 
@@ -22,6 +23,8 @@ interface Post {
 	data: {
 		title: string;
 		tags: string[];
+		tagKeys?: string[];
+		tagLabels?: string[];
 		category?: string;
 		categoryKey?: string;
 		published: Date;
@@ -51,19 +54,19 @@ onMount(async () => {
 	if (tags.length > 0) {
 		filteredPosts = filteredPosts.filter(
 			(post) =>
-				Array.isArray(post.data.tags) &&
-				post.data.tags.some((tag) => tags.includes(tag)),
+				Array.isArray(post.data.tagKeys) &&
+				post.data.tagKeys.some((tag) => tags.includes(tag)),
 		);
 	}
 
 	if (categories.length > 0) {
 		filteredPosts = filteredPosts.filter(
-			(post) => post.data.category && categories.includes(post.data.category),
+			(post) => post.data.categoryKey && categories.includes(post.data.categoryKey),
 		);
 	}
 
 	if (uncategorized) {
-		filteredPosts = filteredPosts.filter((post) => !post.data.category);
+		filteredPosts = filteredPosts.filter((post) => !post.data.categoryKey);
 	}
 
 	const grouped = filteredPosts.reduce(
@@ -145,7 +148,7 @@ onMount(async () => {
                                 class="hidden md:block md:w-[15%] text-left text-sm transition
                      whitespace-nowrap overflow-ellipsis overflow-hidden text-30"
                         >
-                            {formatTag(post.data.tags)}
+                            {formatTag(post.data.tagLabels || post.data.tags)}
                         </div>
                     </div>
                 </a>

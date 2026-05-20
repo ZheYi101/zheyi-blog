@@ -40,10 +40,10 @@ export function getFriendLinkUrl(locale: Locale): string {
 	return url(`${localeToPrefix(locale)}/friendLink/`);
 }
 
-export function getTagUrl(tag: string, locale: Locale): string {
-	if (!tag) return getArchiveUrl(locale);
+export function getTagUrl(tagKey: string, locale: Locale): string {
+	if (!tagKey) return getArchiveUrl(locale);
 	return url(
-		`${localeToPrefix(locale)}/archive/?tag=${encodeURIComponent(tag.trim())}`,
+		`${localeToPrefix(locale)}/archive/?tag=${encodeURIComponent(tagKey.trim())}`,
 	);
 }
 

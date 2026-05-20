@@ -5,7 +5,7 @@ import Markdown from "@components/misc/Markdown.astro";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
-import { getLocalizedPostByTranslationKey, getPostTranslationKey, getSortedPosts } from "@utils/content-utils";
+import { getCategoryKey, getLocalizedPostByTranslationKey, getPostSlug, getPostTranslationKey, getSortedPosts } from "@utils/content-utils";
 import { getDir, getPostUrlBySlug } from "@utils/url-utils";
 import type { Locale } from "@/types/config";
 import { Icon } from "astro-icon/components";
@@ -19,7 +19,7 @@ export async function getStaticPaths() {
 	const locale: Locale = "zh";
 	const blogEntries = await getSortedPosts(locale);
 	return blogEntries.map((entry) => ({
-		params: { slug: entry.slug },
+		params: { slug: getPostSlug(entry) },
 		props: { entry, locale },
 	}));
 }
@@ -34,7 +34,7 @@ const localeSwitchEntry = await getLocalizedPostByTranslationKey(
 	targetLocale,
 );
 const localeSwitchUrl = localeSwitchEntry
-	? getPostUrlBySlug(localeSwitchEntry.slug, targetLocale)
+	? getPostUrlBySlug(getPostSlug(localeSwitchEntry), targetLocale)
 	: "/en/";
 
 const jsonLd = {
@@ -45,7 +45,7 @@ const jsonLd = {
 	keywords: entry.data.tags,
 	author: {
 		"@type": "Person",
-		name: profileConfig.name,
+		name: profileConfig.name[locale],
 		url: Astro.site,
 	},
 	datePublished: formatDateToYYYYMMDD(entry.data.published),
@@ -100,8 +100,7 @@ const jsonLd = {
                         published={entry.data.published}
                         updated={entry.data.updated}
                         tags={entry.data.tags}
-                        category={entry.data.category}
-                        categoryKey={entry.data.categoryKey}
+                        categoryKey={getCategoryKey(entry)}
                         locale={locale}
                 ></PostMetadata>
                 {!entry.data.image && <div class="border-[var(--line-divider)] border-dashed border-b-[1px] mb-5"></div>}
@@ -118,7 +117,7 @@ const jsonLd = {
                 <Content />
             </Markdown>
 
-            {licenseConfig.enable && <License title={entry.data.title} slug={entry.slug} pubDate={entry.data.published} locale={locale} class="mb-6 rounded-xl license-container onload-animation"></License>}
+            {licenseConfig.enable && <License title={entry.data.title} slug={getPostSlug(entry)} pubDate={entry.data.published} locale={locale} class="mb-6 rounded-xl license-container onload-animation"></License>}
 
         </div>
     </div>

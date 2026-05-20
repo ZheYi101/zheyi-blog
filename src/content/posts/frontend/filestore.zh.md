@@ -4,7 +4,6 @@ description: 从一个前端入门者(不专业)的角度浅浅讲下前端项�
 published: 2024-10-27
 draft: false
 tags: [前端入门]
-category: 前端
 image: /source-of-blog/blog-1/117357277_p0.jpg
 ---
 ### 叠甲

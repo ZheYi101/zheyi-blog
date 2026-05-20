@@ -9,11 +9,7 @@ const postsCollection: ReturnType<typeof defineCollection> = defineCollection({
 		description: z.string().optional().default(""),
 		image: z.string().optional().default(""),
 		tags: z.array(z.string()).optional().default([]),
-		category: z.string().optional().nullable().default(""),
-		categoryKey: z.string().optional().nullable().default(""),
 		lang: z.string().optional().default(""),
-		locale: z.enum(["zh", "en"]).optional(),
-		translationKey: z.string().optional().default(""),
 
 		/* For internal use */
 		prevTitle: z.string().default(""),

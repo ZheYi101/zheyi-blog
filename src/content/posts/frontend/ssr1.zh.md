@@ -4,7 +4,6 @@ description: 终于挤出时间写篇博客了, 后续大概率会更SSR-2 ,3 (�
 published: 2025-11-09
 draft: false
 tags: [SSR]
-category: 前端
 image: /source-of-blog/blog-7 ssr1/137138579_p0_master1200.webp
 ---
 

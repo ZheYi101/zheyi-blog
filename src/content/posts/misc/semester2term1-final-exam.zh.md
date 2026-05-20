@@ -4,7 +4,6 @@ description: 纯标题党, 以及其实这学期这考的也挺低的呜
 published: 2026-02-05
 draft: false
 tags: [校园]
-category: 校园&杂谈
 ---
 
 本文未经任何AI润色, 如有错别字,语病等问题, 我心情好就改

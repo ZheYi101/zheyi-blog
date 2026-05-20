@@ -4,7 +4,6 @@ description: 之前就用过elmUI 但这次单人写服外前端Vue项目用了�
 published: 2025-04-28
 draft: false
 tags: [前端入门]
-category: 前端
 image: /source-of-blog/blog-3%20elmUI/elmLogo.png
 ---
 # elmUI介绍

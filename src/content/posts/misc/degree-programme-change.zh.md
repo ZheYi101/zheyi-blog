@@ -4,7 +4,6 @@ description: 24届,大一下转的, 平转(没降), 这一年也研究转专业�
 published: 2025-06-04
 draft: false
 tags: [校园]
-category: 校园&杂谈
 image: /source-of-blog/blog-4%20zzy/komiji.jpg
 ---
 

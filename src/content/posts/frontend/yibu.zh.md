@@ -4,7 +4,6 @@ description: 我在开发中遇到了一个涉及初始化异步的问题, 一�
 published: 2025-09-21
 draft: false
 tags: [前端入门,开发经验]
-category: 前端
 ---
 
 >本文一开始写的有问题, 但是因为思绪混乱, 短时间内没改好;

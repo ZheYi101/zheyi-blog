@@ -4,7 +4,6 @@ description: 讲述下自己最近参与正规开发的苦难
 published: 2024-12-29
 draft: false
 tags: [前端入门]
-category: 前端
 image: /source-of-blog/blog-2/124765810_p0_master1200.jpg
 ---
 

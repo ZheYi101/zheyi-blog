@@ -3,73 +3,79 @@ import type { Locale } from "@/types/config";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import { getCategoryUrl } from "@utils/url-utils.ts";
+import { getTagLabel, getTagLabels, normalizeTagKey, type TagKey } from "@utils/tag-utils";
 
 type PostEntry = CollectionEntry<"posts">;
 type SpecEntry = CollectionEntry<"spec">;
 
-export type CategoryKey = "frontend" | "campus-misc";
+export type CategoryKey = string;
 
 export type CategoryLabel = {
 	zh: string;
 	en: string;
 };
 
-export const CATEGORY_LABELS: Record<CategoryKey, CategoryLabel> = {
+export const CATEGORY_LABELS: Record<string, CategoryLabel> = {
 	frontend: {
 		zh: "前端",
 		en: "Frontend",
 	},
-	"campus-misc": {
+	misc: {
 		zh: "校园&杂谈",
-		en: "Campus & Misc",
+		en: "Misc",
 	},
 };
+
 
 type PostGroup = {
 	translationKey: string;
 	variants: PostEntry[];
 };
 
-function detectPostLocale(post: PostEntry): Locale {
-	if (post.data.locale) {
-		return post.data.locale;
-	}
-	if (post.data.lang?.toLowerCase().startsWith("en")) {
+function normalizeContentPath(path: string): string {
+	return path.replace(/\\/g, "/");
+}
+
+function stripMarkdownExtension(path: string): string {
+	return path.replace(/\.mdx?$/i, "");
+}
+
+function stripLocaleSuffix(path: string): string {
+	return path.replace(/\.(zh|en)$/i, "");
+}
+
+export function getPostSlug(post: Pick<PostEntry, "id">): string {
+	return stripLocaleSuffix(stripMarkdownExtension(normalizeContentPath(post.id)));
+}
+
+export function detectPostLocale(post: Pick<PostEntry, "id" | "data">): Locale {
+	const normalizedId = normalizeContentPath(post.id);
+	if (normalizedId.endsWith(".en.md") || normalizedId.endsWith(".en.mdx")) {
 		return "en";
 	}
-	if (post.id.endsWith(".en.md") || post.slug.endsWith(".en")) {
+	if (normalizedId.endsWith(".zh.md") || normalizedId.endsWith(".zh.mdx")) {
+		return "zh";
+	}
+	if (post.data.lang?.toLowerCase().startsWith("en")) {
 		return "en";
 	}
 	return "zh";
 }
 
-export function getPostTranslationKey(post: PostEntry): string {
-	if (post.data.translationKey) {
-		return post.data.translationKey;
-	}
-	return post.slug.replace(/\.(zh|en)$/i, "");
+export function getPostTranslationKey(post: Pick<PostEntry, "id">): string {
+	return getPostSlug(post);
 }
 
-export function getCategoryKey(post: Pick<PostEntry, "data">): CategoryKey | null {
-	const rawKey = post.data.categoryKey?.trim();
-	if (rawKey === "frontend" || rawKey === "campus-misc") {
-		return rawKey;
-	}
-	const rawCategory = post.data.category?.trim();
-	if (rawCategory === "前端") {
-		return "frontend";
-	}
-	if (rawCategory === "校园&杂谈") {
-		return "campus-misc";
-	}
-	return null;
+export function getCategoryKey(post: Pick<PostEntry, "id">): CategoryKey | null {
+	const [categoryKey] = getPostSlug(post).split("/");
+	return categoryKey?.trim() || null;
 }
 
 export function getCategoryLabel(categoryKey: CategoryKey | null, locale: Locale): string {
 	if (!categoryKey) {
 		return i18n(locale, I18nKey.uncategorized);
 	}
-	return CATEGORY_LABELS[categoryKey][locale];
+	return CATEGORY_LABELS[categoryKey]?.[locale] || categoryKey;
 }
 
 function comparePostsDesc(a: PostEntry, b: PostEntry) {
@@ -112,11 +118,11 @@ function resolvePostVariant(group: PostGroup, locale: Locale): PostEntry {
 
 function withPrevNext(sorted: PostEntry[]) {
 	for (let i = 1; i < sorted.length; i++) {
-		sorted[i].data.nextSlug = sorted[i - 1].slug;
+		sorted[i].data.nextSlug = getPostSlug(sorted[i - 1]);
 		sorted[i].data.nextTitle = sorted[i - 1].data.title;
 	}
 	for (let i = 0; i < sorted.length - 1; i++) {
-		sorted[i].data.prevSlug = sorted[i + 1].slug;
+		sorted[i].data.prevSlug = getPostSlug(sorted[i + 1]);
 		sorted[i].data.prevTitle = sorted[i + 1].data.title;
 	}
 	return sorted;
@@ -146,37 +152,53 @@ export async function getLocalizedPostByTranslationKey(
 
 export type PostForList = {
 	slug: string;
-	data: CollectionEntry<"posts">["data"];
+	data: CollectionEntry<"posts">["data"] & {
+		categoryKey: CategoryKey | null;
+		tagKeys: TagKey[];
+		tagLabels: string[];
+	};
 };
 
 export async function getSortedPostsList(locale: Locale): Promise<PostForList[]> {
 	const sortedFullPosts = await getSortedPosts(locale);
 	return sortedFullPosts.map((post) => ({
-		slug: post.slug,
-		data: post.data,
+		slug: getPostSlug(post),
+		data: {
+			...post.data,
+			categoryKey: getCategoryKey(post),
+			tagKeys: post.data.tags.map((tag: string) => normalizeTagKey(tag)),
+			tagLabels: getTagLabels(post.data.tags, locale),
+		},
 	}));
 }
 
 export type Tag = {
+	key: TagKey;
 	name: string;
 	count: number;
 };
 
 export async function getTagList(locale: Locale): Promise<Tag[]> {
 	const posts = await getSortedPosts(locale);
-	const countMap: { [key: string]: number } = {};
+	const countMap = new Map<TagKey, number>();
 	posts.forEach((post: { data: { tags: string[] } }) => {
 		post.data.tags.forEach((tag: string) => {
-			if (!countMap[tag]) countMap[tag] = 0;
-			countMap[tag]++;
+			const tagKey = normalizeTagKey(tag);
+			countMap.set(tagKey, (countMap.get(tagKey) || 0) + 1);
 		});
 	});
 
-	const keys: string[] = Object.keys(countMap).sort((a, b) => {
-		return a.toLowerCase().localeCompare(b.toLowerCase());
+	const keys = Array.from(countMap.keys()).sort((a, b) => {
+		return getTagLabel(a, locale)
+			.toLowerCase()
+			.localeCompare(getTagLabel(b, locale).toLowerCase());
 	});
 
-	return keys.map((key) => ({ name: key, count: countMap[key] }));
+	return keys.map((key) => ({
+		key,
+		name: getTagLabel(key, locale),
+		count: countMap.get(key) || 0,
+	}));
 }
 
 export type Category = {

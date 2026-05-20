@@ -2,8 +2,10 @@ import type { AUTO_MODE, DARK_MODE, LIGHT_MODE } from "@constants/constants";
 
 export type Locale = "zh" | "en";
 
+export type LocalizedString = Record<Locale, string>;
+
 export type SiteConfig = {
-	title: string;
+	title: LocalizedString;
 	subtitle: string;
 
 	lang: string;
@@ -59,7 +61,7 @@ export type NavBarConfig = {
 
 export type ProfileConfig = {
 	avatar?: string;
-	name: string;
+	name: LocalizedString;
 	bio?: string;
 	links: {
 		name: string;
@@ -87,10 +89,6 @@ export type BlogPostData = {
 	tags: string[];
 	draft?: boolean;
 	image?: string;
-	category?: string;
-	categoryKey?: string;
-	locale?: Locale;
-	translationKey?: string;
 	lang?: string;
 	prevTitle?: string;
 	prevSlug?: string;

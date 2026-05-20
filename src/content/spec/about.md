@@ -1,6 +1,6 @@
 ---
 title: 折乙
-published: 2026-2-19
+published: 2026-02-19
 draft: false
 ---
 

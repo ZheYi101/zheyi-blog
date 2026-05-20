@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import type { Locale } from "@/types/config";
+import { getCategoryKey, getPostSlug } from "@utils/content-utils";
 import { getPostUrlBySlug } from "@utils/url-utils";
 import PostCard from "./PostCard.astro";
 
@@ -15,11 +16,10 @@ const interval = 50;
                 entry={entry}
                 title={entry.data.title}
                 tags={entry.data.tags}
-                category={entry.data.category}
-                categoryKey={entry.data.categoryKey}
+                categoryKey={getCategoryKey(entry)}
                 published={entry.data.published}
                 updated={entry.data.updated}
-                url={getPostUrlBySlug(entry.slug, locale)}
+                url={getPostUrlBySlug(getPostSlug(entry), locale)}
                 image={entry.data.image}
                 description={entry.data.description}
                 draft={entry.data.draft}

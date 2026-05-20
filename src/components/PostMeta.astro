@@ -3,8 +3,9 @@ import { Icon } from "astro-icon/components";
 import type { Locale } from "@/types/config";
 import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
-import { getCategoryKey, getCategoryLabel } from "../utils/content-utils";
+import { getCategoryLabel } from "../utils/content-utils";
 import { formatDateToYYYYMMDD } from "../utils/date-utils";
+import { getTagLabel, normalizeTagKey } from "../utils/tag-utils";
 import { getCategoryUrl, getTagUrl } from "../utils/url-utils";
 
 interface Props {
@@ -12,7 +13,6 @@ interface Props {
 	published: Date;
 	updated?: Date;
 	tags: string[];
-	category: string | null;
 	categoryKey?: string | null;
 	locale: Locale;
 	hideTagsForMobile?: boolean;
@@ -22,13 +22,12 @@ const {
 	published,
 	updated,
 	tags,
-	category,
 	locale,
 	hideTagsForMobile = false,
 	hideUpdateDate = false,
 } = Astro.props;
 const className = Astro.props.class;
-const categoryKey = getCategoryKey({ data: { category, categoryKey: Astro.props.categoryKey } });
+const categoryKey = Astro.props.categoryKey ?? null;
 const categoryLabel = getCategoryLabel(categoryKey, locale);
 ---
 
@@ -77,10 +76,10 @@ const categoryLabel = getCategoryLabel(categoryKey, locale);
         <div class="flex flex-row flex-nowrap items-center">
             {(tags && tags.length > 0) && tags.map((tag, i) => (
                 <div class:list={[{"hidden": i == 0}, "mx-1.5 text-[var(--meta-divider)] text-sm"]}>/</div>
-                <a href={getTagUrl(tag, locale)} aria-label={`View all posts with the ${tag.trim()} tag`}
+                <a href={getTagUrl(normalizeTagKey(tag), locale)} aria-label={`View all posts with the ${getTagLabel(normalizeTagKey(tag), locale).trim()} tag`}
                    class="link-lg transition text-50 text-sm font-medium
                                 hover:text-[var(--primary)] dark:hover:text-[var(--primary)] whitespace-nowrap">
-                    {tag.trim()}
+                    {getTagLabel(normalizeTagKey(tag), locale).trim()}
                 </a>
             ))}
             {!(tags && tags.length > 0) && <div class="transition text-50 text-sm font-medium">{i18n(locale, I18nKey.noTags)}</div>}
