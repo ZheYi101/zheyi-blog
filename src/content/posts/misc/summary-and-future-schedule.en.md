@@ -2,7 +2,7 @@
 title: 24-26, Computer Major, and Thoughts on AI Era
 description: Sharing my own experience and plans. Hope you get some ideas from it.
 published: 2026-07-25
-draft: true
+draft: false
 tags: [campus]
 image: /source-of-blog/blog-9/144915893_p0.webp
 ---

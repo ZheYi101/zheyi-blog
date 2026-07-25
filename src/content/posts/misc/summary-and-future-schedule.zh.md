@@ -2,7 +2,7 @@
 title: 24-26, 计算机专业, 以及对AI时代的一些思考
 description: 分享我自己的经历和计划。希望你能从中得到些启发。
 published: 2026-07-25
-draft: true
+draft: false
 tags: [校园]
 image: /source-of-blog/blog-9/144915893_p0.webp
 ---
