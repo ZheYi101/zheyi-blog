@@ -1,5 +1,6 @@
 ---
 import path from "node:path";
+import { render } from "astro:content";
 import type { Locale } from "@/types/config";
 import License from "@components/misc/License.astro";
 import Markdown from "@components/misc/Markdown.astro";
@@ -25,8 +26,7 @@ export async function getStaticPaths() {
 }
 
 const { entry, locale } = Astro.props as { entry: Awaited<ReturnType<typeof getSortedPosts>>[number]; locale: Locale };
-const { Content, headings } = await entry.render();
-const { remarkPluginFrontmatter } = await entry.render();
+const { Content, headings, remarkPluginFrontmatter } = await render(entry);
 const targetLocale: Locale = "zh";
 const localeSwitchEntry = await getLocalizedPostByTranslationKey(
 	getPostTranslationKey(entry),

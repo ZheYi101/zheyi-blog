@@ -44,16 +44,23 @@ function stripLocaleSuffix(path: string): string {
 	return path.replace(/\.(zh|en)$/i, "");
 }
 
-export function getPostSlug(post: Pick<PostEntry, "id">): string {
-	return stripLocaleSuffix(stripMarkdownExtension(normalizeContentPath(post.id)));
+function getPostSourcePath(post: Pick<PostEntry, "id" | "filePath">): string {
+	const filePath = post.filePath ? normalizeContentPath(post.filePath) : "";
+	const marker = "src/content/posts/";
+	const markerIndex = filePath.indexOf(marker);
+	return markerIndex >= 0 ? filePath.slice(markerIndex + marker.length) : normalizeContentPath(post.id);
 }
 
-export function detectPostLocale(post: Pick<PostEntry, "id" | "data">): Locale {
-	const normalizedId = normalizeContentPath(post.id);
-	if (normalizedId.endsWith(".en.md") || normalizedId.endsWith(".en.mdx")) {
+export function getPostSlug(post: Pick<PostEntry, "id" | "filePath">): string {
+	return stripLocaleSuffix(stripMarkdownExtension(getPostSourcePath(post)));
+}
+
+export function detectPostLocale(post: Pick<PostEntry, "id" | "filePath" | "data">): Locale {
+	const sourcePath = getPostSourcePath(post);
+	if (sourcePath.endsWith(".en.md") || sourcePath.endsWith(".en.mdx")) {
 		return "en";
 	}
-	if (normalizedId.endsWith(".zh.md") || normalizedId.endsWith(".zh.mdx")) {
+	if (sourcePath.endsWith(".zh.md") || sourcePath.endsWith(".zh.mdx")) {
 		return "zh";
 	}
 	if (post.data.lang?.toLowerCase().startsWith("en")) {
@@ -62,7 +69,7 @@ export function detectPostLocale(post: Pick<PostEntry, "id" | "data">): Locale {
 	return "zh";
 }
 
-export function getPostTranslationKey(post: Pick<PostEntry, "id">): string {
+export function getPostTranslationKey(post: Pick<PostEntry, "id" | "filePath">): string {
 	return getPostSlug(post);
 }
 
@@ -236,7 +243,8 @@ function detectSpecLocale(entry: SpecEntry): Locale {
 	if (entry.data.locale) {
 		return entry.data.locale;
 	}
-	if (entry.id.endsWith(".en") || entry.id.endsWith(".en.md")) {
+	const sourcePath = entry.filePath ? normalizeContentPath(entry.filePath) : entry.id;
+	if (sourcePath.endsWith(".en") || sourcePath.endsWith(".en.md")) {
 		return "en";
 	}
 	return "zh";
@@ -246,7 +254,13 @@ function getSpecTranslationKey(entry: SpecEntry): string {
 	if (entry.data.translationKey) {
 		return entry.data.translationKey;
 	}
-	return entry.id.replace(/\.(zh|en)$/i, "");
+	const sourcePath = entry.filePath ? normalizeContentPath(entry.filePath) : entry.id;
+	const marker = "src/content/spec/";
+	const markerIndex = sourcePath.indexOf(marker);
+	const relativePath = markerIndex >= 0
+		? sourcePath.slice(markerIndex + marker.length)
+		: sourcePath;
+	return stripLocaleSuffix(stripMarkdownExtension(relativePath));
 }
 
 export async function getLocalizedSpecEntry(

@@ -44,7 +44,10 @@ export default defineConfig({
 			cache: true,
 			preload: true,
 			accessibility: true,
-			updateHead: true,
+			// Astro/Vite dev styles are managed in <head>. Replacing that node during
+			// a Swup navigation can reorder utility styles and leave routed pages with
+			// broken layout, so keep the document head stable between navigations.
+			updateHead: false,
 			updateBodyClass: false,
 			globalInstance: true,
 		}),
@@ -157,7 +160,11 @@ export default defineConfig({
 		],
 	},
 	vite: {
+		css: {
+			transformer: "postcss",
+		},
 		build: {
+			cssMinify: "esbuild",
 			rollupOptions: {
 				onwarn(warning, warn) {
 					// temporarily suppress this warning

@@ -8,8 +8,8 @@ import { getDefaultLocale } from "../utils/setting-utils";
 import { normalizeTagKey } from "../utils/tag-utils";
 import { getPostUrlBySlug } from "../utils/url-utils";
 
-export let tags: string[];
-export let categories: string[];
+export let tags: string[] = [];
+export let categories: string[] = [];
 export let sortedPosts: Post[] = [];
 export let locale: Locale = getDefaultLocale();
 
@@ -26,7 +26,7 @@ interface Post {
 		tagKeys?: string[];
 		tagLabels?: string[];
 		category?: string;
-		categoryKey?: string;
+		categoryKey?: string | null;
 		published: Date;
 	};
 }
