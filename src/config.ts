@@ -82,14 +82,19 @@ export const profileConfig: ProfileConfig = {
 			url: "https://github.com/ZheYi101",
 		},
 		{
-			name: "Steam",
-			icon: "fa6-brands:steam",
-			url: "https://steamcommunity.com/profiles/76561198947256485",
+			name: "Bilibili",
+			icon: "fa6-brands:bilibili",
+			url: "https://space.bilibili.com/3537113825938180", // Replace with your Bilibili UID
 		},
 		{
 			name: "QQ",
 			icon: "fa6-brands:qq",
 			url: "https://qm.qq.com/q/GD6As3bp06",
+		},
+		{
+			name: "Gmail",
+			icon: "fa6-solid:envelope",
+			url: "mailto:zheyi563@gmail.com", // Replace with your Gmail address
 		},
 	],
 };
