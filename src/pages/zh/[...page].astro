@@ -1,0 +1,12 @@
+---
+import type { GetStaticPaths } from "astro";
+import HomePage from "@components/pages/HomePage.astro";
+import { PAGE_SIZE } from "@/constants/constants";
+import { getSortedPosts } from "@utils/content-utils";
+export const getStaticPaths = (async ({ paginate }) => {
+    const locale = "zh" as const;
+    return paginate(await getSortedPosts(locale), { pageSize: PAGE_SIZE, props: { locale } });
+}) satisfies GetStaticPaths;
+const { page, locale } = Astro.props;
+---
+<HomePage page={page} locale={locale} />

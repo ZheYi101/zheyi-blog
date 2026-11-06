@@ -154,7 +154,7 @@ The example I wrote about in the previous post is a hydration problem. It is com
 
 Although that post is dated September, I rewrote its core solution after finishing this `SSR Part 1`, and revised the rest as well. You can read it here:
 
-[Fixing a Hydration Problem I Ran Into](/en/posts/frontend/yibu/)
+[Fixing a Hydration Problem I Ran Into](/posts/frontend/yibu/)
 
 # Closing Thoughts
 

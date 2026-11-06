@@ -1,24 +1,12 @@
 ---
 import type { GetStaticPaths } from "astro";
-import Pagination from "../components/control/Pagination.astro";
-import PostPage from "../components/PostPage.astro";
-import { PAGE_SIZE } from "../constants/constants";
-import MainGridLayout from "../layouts/MainGridLayout.astro";
-import { getSortedPosts } from "../utils/content-utils";
-
+import HomePage from "@components/pages/HomePage.astro";
+import { PAGE_SIZE } from "@/constants/constants";
+import { getSortedPosts } from "@utils/content-utils";
 export const getStaticPaths = (async ({ paginate }) => {
-	const locale = "zh" as const;
-	const allBlogPosts = await getSortedPosts(locale);
-	return paginate(allBlogPosts, { pageSize: PAGE_SIZE, props: { locale } });
+    const locale = "en" as const;
+    return paginate(await getSortedPosts(locale), { pageSize: PAGE_SIZE, props: { locale } });
 }) satisfies GetStaticPaths;
-// https://github.com/withastro/astro/issues/6507#issuecomment-1489916992
-
 const { page, locale } = Astro.props;
-
-const len = page.data.length;
 ---
-
-<MainGridLayout locale={locale} localeSwitchUrl="/en/">
-    <PostPage page={page} locale={locale}></PostPage>
-    <Pagination class="mx-auto onload-animation" page={page} locale={locale} style={`animation-delay: calc(var(--content-delay) + ${len * 50}ms)`}></Pagination>
-</MainGridLayout>
+<HomePage page={page} locale={locale} />

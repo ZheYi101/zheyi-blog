@@ -4,7 +4,8 @@ import {
 	DEFAULT_THEME,
 	LIGHT_MODE,
 } from "@constants/constants.ts";
-import { expressiveCodeConfig } from "@/config";
+import { isLocale } from "@i18n/locales";
+import { expressiveCodeConfig, siteConfig } from "@/config";
 import type { LIGHT_DARK_MODE, Locale } from "@/types/config";
 
 export function getDefaultHue(): number {
@@ -61,28 +62,13 @@ export function getStoredTheme(): LIGHT_DARK_MODE {
 }
 
 export function getDefaultMode(): LIGHT_DARK_MODE {
-  const configCarrier = document.getElementById('config-carrier')
-  return ((configCarrier?.dataset.lightDarkMode || LIGHT_MODE) as LIGHT_DARK_MODE)
+	const configCarrier = document.getElementById("config-carrier");
+	return (configCarrier?.dataset.lightDarkMode ||
+		LIGHT_MODE) as LIGHT_DARK_MODE;
 }
 
 export function getDefaultLocale(): Locale {
 	const configCarrier = document.getElementById("config-carrier");
-	return (configCarrier?.dataset.locale as Locale) || "zh";
-}
-
-export function getStoredLocale(): Locale | null {
-	return (localStorage.getItem("locale") as Locale | null) || null;
-}
-
-export function detectBrowserLocale(): Locale {
-	return navigator.language.toLowerCase().startsWith("zh") ? "zh" : "en";
-}
-
-export function getPreferredLocale(): Locale {
-	return getStoredLocale() || detectBrowserLocale();
-}
-
-export function setLocale(locale: Locale): void {
-	localStorage.setItem("locale", locale);
-	document.documentElement.lang = locale === "zh" ? "zh-CN" : "en";
+	const locale = configCarrier?.dataset.locale;
+	return isLocale(locale) ? locale : siteConfig.defaultLocale;
 }

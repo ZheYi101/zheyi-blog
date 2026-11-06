@@ -49,6 +49,33 @@
 4. Run `pnpm new-post <filename>` to create a new post and edit it in `src/content/posts/`.
 5. Deploy your blog to Vercel, Netlify, GitHub Pages, etc. following [the guides](https://docs.astro.build/en/guides/deploy/). You need to edit the site configuration in `astro.config.mjs` before deployment.
 
+## 🌐 English-first bilingual publishing
+
+English pages live at `/`, `/posts/{slug}/`, `/archive/`, `/about/`, and `/friendLink/`.
+Chinese pages use the same paths under `/zh/`. English pagination is `/2/`, etc.; Chinese pagination is `/zh/2/`.
+The default interface locale is `siteConfig.defaultLocale: "en"` in `src/config.ts`.
+The requested URL always controls the interface language, regardless of browser language or saved preferences.
+
+Write the English original first, then add a Chinese translation with the same category and filename stem:
+
+```sh
+pnpm new-post misc/my-post          # src/content/posts/misc/my-post.en.md
+pnpm new-post misc/my-post.zh.md    # src/content/posts/misc/my-post.zh.md
+pnpm new-post misc/interactive.en.mdx
+```
+
+Plain `.md` and `.mdx` names also receive an `.en` suffix. Explicit `.en` and `.zh` suffixes are preserved.
+Both files share a slug; filenames select the language variant. Legacy unsuffixed posts remain Chinese.
+If a translation is missing, both sections show the available version. Publishing does not require both versions.
+Use `/posts/.../` for English article links and `/zh/posts/.../` for Chinese links.
+For post grouping, categories come from folders rather than a `category` frontmatter field.
+
+Subscribe to `/rss-en.xml` for English or `/zh/rss.xml` for Chinese.
+On Vercel, `/rss.xml` permanently redirects to the Chinese feed and preserves existing item identifiers;
+old `/en/...` URLs permanently redirect to the equivalent unprefixed English pages.
+These HTTP redirects are configured in `vercel.json` and do not run under `pnpm preview`.
+Other hosting providers need equivalent redirect rules. Existing unprefixed article URLs now serve English.
+
 ## 📝 Frontmatter of Posts
 
 ```yaml
@@ -58,15 +85,11 @@ published: 2023-09-09
 description: This is the first post of my new Astro blog.
 image: ./cover.jpg
 tags: [Foo, Bar]
-category: Front-end
 draft: false
-lang: jp      # 仅当文章语言与 `config.ts` 中的网站语言不同时需要设置
+lang: en      # Content language; use zh-CN for Chinese translations
 ---
 ```
 
-<<<<<<< HEAD
-## 🧞 指令
-=======
 ## 🧩 Markdown Extended Syntax
 
 In addition to Astro's default support for [GitHub Flavored Markdown](https://github.github.com/gfm/), several extra Markdown features are included:
@@ -76,7 +99,6 @@ In addition to Astro's default support for [GitHub Flavored Markdown](https://gi
 - Enhanced code blocks with Expressive Code ([Preview](https://fuwari.vercel.app/posts/expressive-code/) / [Docs](https://expressive-code.com/))
 
 ## ⚡ Commands
->>>>>>> author/main
 
 下列指令均需要在项目根目录执行：
 

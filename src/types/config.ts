@@ -8,7 +8,7 @@ export type SiteConfig = {
 	title: LocalizedString;
 	subtitle: string;
 
-	lang: string;
+	defaultLocale: Locale;
 
 	themeColor: {
 		hue: number;

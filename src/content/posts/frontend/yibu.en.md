@@ -8,7 +8,7 @@ tags: [frontend-beginner, dev-experience]
 
 # This article was translated by AI from the Chinese version.
 
-> This article was confused when I first wrote it, and I did not manage to fix it quickly. After publishing [SSR Part 1: From Rendering Patterns to Simple SSR Problems](https://zheyi.in/en/posts/frontend/ssr1/) on `2025-11-09`, I rewrote the second half. You can now read this as a concrete hydration-problem fix.
+> This article was confused when I first wrote it, and I did not manage to fix it quickly. After publishing [SSR Part 1: From Rendering Patterns to Simple SSR Problems](https://zheyi.in/posts/frontend/ssr1/) on `2025-11-09`, I rewrote the second half. You can now read this as a concrete hydration-problem fix.
 
 # The Scenario
 

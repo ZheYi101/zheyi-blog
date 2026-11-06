@@ -3,7 +3,8 @@ import { Icon } from "astro-icon/components";
 import { navBarConfig, siteConfig } from "../config";
 import { getLinkPresets } from "../constants/link-presets";
 import { LinkPreset, type Locale, type NavBarLink } from "../types/config";
-import { getHomeUrl, url } from "../utils/url-utils";
+import { getOtherLocale } from "@i18n/locales";
+import { getHomeUrl, getLocalizedUrl, url } from "../utils/url-utils";
 import LightDarkSwitch from "./LightDarkSwitch.svelte";
 import Search from "./Search.svelte";
 import DisplaySettings from "./widget/DisplaySettings.svelte";
@@ -12,14 +13,13 @@ import NavMenuPanel from "./widget/NavMenuPanel.astro";
 interface Props {
 	class?: string;
 	locale: Locale;
-	localeSwitchUrl?: string;
 }
 
-const { class: className, locale, localeSwitchUrl } = Astro.props as Props;
+const { class: className, locale } = Astro.props as Props;
 const linkPresets = getLinkPresets(locale);
 const siteTitle = siteConfig.title[locale];
-const otherLocale: Locale = locale === "zh" ? "en" : "zh";
-const switchHref = localeSwitchUrl || getHomeUrl(otherLocale);
+const otherLocale = getOtherLocale(locale);
+const switchHref = getLocalizedUrl(Astro.url.href, otherLocale);
 const switchLabel = locale === "zh" ? "EN" : "中";
 const switchTitle = locale === "zh" ? "Switch to English" : "切换到中文";
 
@@ -85,6 +85,8 @@ let links: NavBarLink[] = navBarConfig.links.map(
 </div>
 
 <script>
+import { isLocale } from "@i18n/locales";
+import { getLocalizedUrl } from "@utils/url-utils";
 function switchTheme() {
 	if (localStorage.theme === 'dark') {
 		document.documentElement.classList.remove('dark');
@@ -103,13 +105,24 @@ function loadButtonScript() {
 		};
 	}
 
-	let localeSwitch = document.getElementById('locale-switch');
+	const localeSwitch = document.querySelector<HTMLAnchorElement>('#locale-switch');
 	if (localeSwitch) {
-		localeSwitch.onclick = function () {
-			const targetLocale = localeSwitch.getAttribute('data-target-locale');
-			if (targetLocale) {
-				localStorage.setItem('locale', targetLocale);
+		const updateSwitch = () => {
+			const targetLocale = localeSwitch.dataset.targetLocale;
+			if (isLocale(targetLocale)) {
+				localeSwitch.href = getLocalizedUrl(window.location.href, targetLocale);
 			}
+		};
+		updateSwitch();
+		const bindNavigation = () => window.swup.hooks.on('page:view', updateSwitch);
+		if (window.swup?.hooks) bindNavigation();
+		else document.addEventListener('swup:enable', bindNavigation, { once: true });
+		localeSwitch.addEventListener('pointerenter', updateSwitch);
+		localeSwitch.addEventListener('focus', updateSwitch);
+		localeSwitch.onclick = () => {
+			updateSwitch();
+			const targetLocale = localeSwitch.dataset.targetLocale;
+			if (isLocale(targetLocale)) localStorage.setItem('locale', targetLocale);
 		};
 	}
 

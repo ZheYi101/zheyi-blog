@@ -1,9 +1,9 @@
 ---
 
-import type { Locale } from "@/types/config";
 import { siteConfig } from "../config";
+import { normalizeLocale } from "@i18n/translation";
 
-const locale = (Astro.props.locale || "zh") as Locale;
+const locale = normalizeLocale(Astro.props.locale);
 ---
 
 <div id="config-carrier" data-hue={siteConfig.themeColor.hue} data-lightDarkMode={siteConfig.lightDarkMode.defaultMode} data-locale={locale}>

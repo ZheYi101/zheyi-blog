@@ -12,6 +12,8 @@ import { vi } from "./languages/vi";
 import { zh_CN } from "./languages/zh_CN";
 import { zh_TW } from "./languages/zh_TW";
 
+export { getHtmlLang } from "./locales";
+
 export type Translation = {
 	[K in I18nKey]: string;
 };
@@ -44,12 +46,8 @@ export function getTranslation(lang: string): Translation {
 }
 
 export function normalizeLocale(lang?: string | null): Locale {
-	const normalized = (lang || siteConfig.lang || "zh_CN").toLowerCase();
+	const normalized = (lang || siteConfig.defaultLocale).toLowerCase();
 	return normalized.startsWith("zh") ? "zh" : "en";
-}
-
-export function getHtmlLang(locale: Locale): string {
-	return locale === "zh" ? "zh-CN" : "en";
 }
 
 export function i18n(locale: Locale, key: I18nKey): string {

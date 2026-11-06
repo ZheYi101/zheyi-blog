@@ -1,9 +1,15 @@
 import { type CollectionEntry, getCollection, getEntry } from "astro:content";
-import type { Locale } from "@/types/config";
 import I18nKey from "@i18n/i18nKey";
+import { getHtmlLang, getOtherLocale } from "@i18n/locales";
 import { i18n } from "@i18n/translation";
+import {
+	getTagLabel,
+	getTagLabels,
+	normalizeTagKey,
+	type TagKey,
+} from "@utils/tag-utils";
 import { getCategoryUrl } from "@utils/url-utils.ts";
-import { getTagLabel, getTagLabels, normalizeTagKey, type TagKey } from "@utils/tag-utils";
+import type { Locale } from "@/types/config";
 
 type PostEntry = CollectionEntry<"posts">;
 type SpecEntry = CollectionEntry<"spec">;
@@ -26,7 +32,6 @@ export const CATEGORY_LABELS: Record<string, CategoryLabel> = {
 	},
 };
 
-
 type PostGroup = {
 	translationKey: string;
 	variants: PostEntry[];
@@ -48,14 +53,18 @@ function getPostSourcePath(post: Pick<PostEntry, "id" | "filePath">): string {
 	const filePath = post.filePath ? normalizeContentPath(post.filePath) : "";
 	const marker = "src/content/posts/";
 	const markerIndex = filePath.indexOf(marker);
-	return markerIndex >= 0 ? filePath.slice(markerIndex + marker.length) : normalizeContentPath(post.id);
+	return markerIndex >= 0
+		? filePath.slice(markerIndex + marker.length)
+		: normalizeContentPath(post.id);
 }
 
 export function getPostSlug(post: Pick<PostEntry, "id" | "filePath">): string {
 	return stripLocaleSuffix(stripMarkdownExtension(getPostSourcePath(post)));
 }
 
-export function detectPostLocale(post: Pick<PostEntry, "id" | "filePath" | "data">): Locale {
+export function detectPostLocale(
+	post: Pick<PostEntry, "id" | "filePath" | "data">,
+): Locale {
 	const sourcePath = getPostSourcePath(post);
 	if (sourcePath.endsWith(".en.md") || sourcePath.endsWith(".en.mdx")) {
 		return "en";
@@ -69,16 +78,32 @@ export function detectPostLocale(post: Pick<PostEntry, "id" | "filePath" | "data
 	return "zh";
 }
 
-export function getPostTranslationKey(post: Pick<PostEntry, "id" | "filePath">): string {
+export function getPostTranslationKey(
+	post: Pick<PostEntry, "id" | "filePath">,
+): string {
 	return getPostSlug(post);
 }
 
-export function getCategoryKey(post: Pick<PostEntry, "id">): CategoryKey | null {
+export function getPostContentLang(
+	post: Pick<PostEntry, "id" | "filePath" | "data">,
+): string {
+	return (
+		post.data.lang?.trim().replace(/_/g, "-") ||
+		getHtmlLang(detectPostLocale(post))
+	);
+}
+
+export function getCategoryKey(
+	post: Pick<PostEntry, "id">,
+): CategoryKey | null {
 	const [categoryKey] = getPostSlug(post).split("/");
 	return categoryKey?.trim() || null;
 }
 
-export function getCategoryLabel(categoryKey: CategoryKey | null, locale: Locale): string {
+export function getCategoryLabel(
+	categoryKey: CategoryKey | null,
+	locale: Locale,
+): string {
 	if (!categoryKey) {
 		return i18n(locale, I18nKey.uncategorized);
 	}
@@ -112,11 +137,13 @@ function groupPosts(posts: PostEntry[]): PostGroup[] {
 }
 
 function resolvePostVariant(group: PostGroup, locale: Locale): PostEntry {
-	const exact = group.variants.find((post) => detectPostLocale(post) === locale);
+	const exact = group.variants.find(
+		(post) => detectPostLocale(post) === locale,
+	);
 	if (exact) {
 		return exact;
 	}
-	const fallbackLocale: Locale = locale === "zh" ? "en" : "zh";
+	const fallbackLocale = getOtherLocale(locale);
 	const fallback = group.variants.find(
 		(post) => detectPostLocale(post) === fallbackLocale,
 	);
@@ -124,15 +151,20 @@ function resolvePostVariant(group: PostGroup, locale: Locale): PostEntry {
 }
 
 function withPrevNext(sorted: PostEntry[]) {
-	for (let i = 1; i < sorted.length; i++) {
-		sorted[i].data.nextSlug = getPostSlug(sorted[i - 1]);
-		sorted[i].data.nextTitle = sorted[i - 1].data.title;
-	}
-	for (let i = 0; i < sorted.length - 1; i++) {
-		sorted[i].data.prevSlug = getPostSlug(sorted[i + 1]);
-		sorted[i].data.prevTitle = sorted[i + 1].data.title;
-	}
-	return sorted;
+	return sorted.map((post, index) => {
+		const newer = sorted[index - 1];
+		const older = sorted[index + 1];
+		return {
+			...post,
+			data: {
+				...post.data,
+				nextSlug: newer ? getPostSlug(newer) : "",
+				nextTitle: newer?.data.title || "",
+				prevSlug: older ? getPostSlug(older) : "",
+				prevTitle: older?.data.title || "",
+			},
+		};
+	});
 }
 
 export async function getSortedPosts(locale: Locale): Promise<PostEntry[]> {
@@ -166,7 +198,9 @@ export type PostForList = {
 	};
 };
 
-export async function getSortedPostsList(locale: Locale): Promise<PostForList[]> {
+export async function getSortedPostsList(
+	locale: Locale,
+): Promise<PostForList[]> {
 	const sortedFullPosts = await getSortedPosts(locale);
 	return sortedFullPosts.map((post) => ({
 		slug: getPostSlug(post),
@@ -239,12 +273,14 @@ export async function getCategoryList(locale: Locale): Promise<Category[]> {
 	}));
 }
 
-function detectSpecLocale(entry: SpecEntry): Locale {
+export function detectSpecLocale(entry: SpecEntry): Locale {
 	if (entry.data.locale) {
 		return entry.data.locale;
 	}
-	const sourcePath = entry.filePath ? normalizeContentPath(entry.filePath) : entry.id;
-	if (sourcePath.endsWith(".en") || sourcePath.endsWith(".en.md")) {
+	const sourcePath = entry.filePath
+		? normalizeContentPath(entry.filePath)
+		: entry.id;
+	if (/\.en(?:\.mdx?)?$/i.test(sourcePath)) {
 		return "en";
 	}
 	return "zh";
@@ -254,12 +290,15 @@ function getSpecTranslationKey(entry: SpecEntry): string {
 	if (entry.data.translationKey) {
 		return entry.data.translationKey;
 	}
-	const sourcePath = entry.filePath ? normalizeContentPath(entry.filePath) : entry.id;
+	const sourcePath = entry.filePath
+		? normalizeContentPath(entry.filePath)
+		: entry.id;
 	const marker = "src/content/spec/";
 	const markerIndex = sourcePath.indexOf(marker);
-	const relativePath = markerIndex >= 0
-		? sourcePath.slice(markerIndex + marker.length)
-		: sourcePath;
+	const relativePath =
+		markerIndex >= 0
+			? sourcePath.slice(markerIndex + marker.length)
+			: sourcePath;
 	return stripLocaleSuffix(stripMarkdownExtension(relativePath));
 }
 
@@ -268,12 +307,14 @@ export async function getLocalizedSpecEntry(
 	locale: Locale,
 ): Promise<SpecEntry | undefined> {
 	const entries = await getCollection("spec");
-	const matched = entries.filter((entry) => getSpecTranslationKey(entry) === id);
+	const matched = entries.filter(
+		(entry) => getSpecTranslationKey(entry) === id,
+	);
 	const exact = matched.find((entry) => detectSpecLocale(entry) === locale);
 	if (exact) {
 		return exact;
 	}
-	const fallbackLocale: Locale = locale === "zh" ? "en" : "zh";
+	const fallbackLocale = getOtherLocale(locale);
 	const fallback = matched.find(
 		(entry) => detectSpecLocale(entry) === fallbackLocale,
 	);

@@ -56,6 +56,30 @@ deno run -A npm:create-fuwari@latest
 4. 执行 `pnpm new-post <filename>` 创建新文章，并在 `src/content/posts/` 目录中编辑
 5. 参考[官方指南](https://docs.astro.build/zh-cn/guides/deploy/)将博客部署至 Vercel, Netlify, GitHub Pages 等；部署前需编辑 `astro.config.mjs` 中的站点设置。
 
+## 🌐 英文优先的双语发布
+
+英文首页位于 `/`，文章位于 `/posts/{slug}/`，归档、关于和友链分别位于 `/archive/`、`/about/`、`/friendLink/`。
+中文页面使用相同路径并加上 `/zh/` 前缀；分页分别为 `/2/` 和 `/zh/2/`。
+`src/config.ts` 中的 `siteConfig.defaultLocale` 为 `"en"`。界面语言由访问的 URL 决定，不会被浏览器语言或已保存的偏好覆盖。
+
+先写英文原文，再以相同目录和文件名添加中文译文：
+
+```sh
+pnpm new-post misc/my-post          # 创建 misc/my-post.en.md
+pnpm new-post misc/my-post.zh.md    # 创建 misc/my-post.zh.md
+pnpm new-post misc/interactive.en.mdx
+```
+
+未指定语言的 `.md`、`.mdx` 文件名会自动添加 `.en`；显式指定的 `.en`、`.zh` 后缀会保留。
+两个版本共享不带语言后缀的文章 slug。旧的无语言后缀文章仍识别为中文。
+缺少译文时，两种界面都会显示已有的版本，因此可以先发布英文，稍后补充中文。
+英文文内链接使用 `/posts/.../`，中文使用 `/zh/posts/.../`。文章分类由目录决定，无需填写 `category`。
+
+英文 RSS 为 `/rss-en.xml`，中文为 `/zh/rss.xml`。
+Vercel 上的 `/rss.xml` 会永久重定向至中文 RSS，保留旧文章的订阅标识；旧 `/en/...` 链接会永久重定向至对应的英文页面。
+重定向规则位于 `vercel.json`，`pnpm preview` 不会执行这些规则；其他托管平台需配置等效规则。
+原来不带语言前缀的文章 URL 现在提供英文版本。
+
 ## ⚙️ 文章 Frontmatter
 
 ```yaml
@@ -65,9 +89,8 @@ published: 2023-09-09
 description: This is the first post of my new Astro blog.
 image: ./cover.jpg
 tags: [Foo, Bar]
-category: Front-end
 draft: false
-lang: jp      # 仅当文章语言与 `config.ts` 中的网站语言不同时需要设置
+lang: en      # 文章内容语言；中文译文使用 zh-CN
 ---
 ```
 

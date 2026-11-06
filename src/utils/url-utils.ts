@@ -1,5 +1,6 @@
-import type { Locale } from "@/types/config";
+import { localeSettings } from "@i18n/locales";
 import type { CategoryKey } from "@utils/content-utils";
+import type { Locale } from "@/types/config";
 
 export function pathsEqual(path1: string, path2: string): boolean {
 	const normalizedPath1 = path1.replace(/^\/|\/$/g, "").toLowerCase();
@@ -13,11 +14,35 @@ function joinUrl(...parts: string[]): string {
 }
 
 export function localeToPrefix(locale: Locale): string {
-	return locale === "en" ? "/en" : "";
+	return localeSettings[locale].prefix;
 }
 
 export function getLocaleFromPathname(pathname: string): Locale {
-	return pathname === "/en" || pathname.startsWith("/en/") ? "en" : "zh";
+	const path = withoutBase(pathname);
+	const prefix = localeToPrefix("zh");
+	return path === prefix || path.startsWith(`${prefix}/`) ? "zh" : "en";
+}
+
+function withoutBase(pathname: string): string {
+	const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+	return base && (pathname === base || pathname.startsWith(`${base}/`))
+		? pathname.slice(base.length) || "/"
+		: pathname;
+}
+
+/** Switch section without losing the page, filters, or fragment. */
+export function getLocalizedUrl(currentUrl: string, locale: Locale): string {
+	const current = new URL(currentUrl, "https://local.invalid");
+	const path = withoutBase(current.pathname);
+	const prefix = localeToPrefix(getLocaleFromPathname(current.pathname));
+	const routePath = (prefix ? path.slice(prefix.length) : path) || "/";
+	return `${url(`${localeToPrefix(locale)}${routePath}`)}${current.search}${current.hash}`;
+}
+
+export function getRssUrl(locale: Locale): string {
+	return url(
+		locale === "en" ? "/rss-en.xml" : `${localeToPrefix(locale)}/rss.xml`,
+	);
 }
 
 export function getHomeUrl(locale: Locale): string {
