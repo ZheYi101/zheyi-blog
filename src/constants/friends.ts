@@ -32,6 +32,12 @@ export const friendLinks: FriendLink[] = [
 		avatar: "https://gendo.dpdns.org/img/schwarz.jpeg",
 	},
 	{
+		name: "shy",
+		url: "https://shhy.in/",
+		description: "",
+		avatar: "https://shhy.in/daydream_forester.jpg",
+	},
+	{
 		name: "黑蚊子多",
 		url: "https://heavensdoor1.top",
 		description: "thoughtful one",
