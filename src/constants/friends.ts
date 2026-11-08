@@ -43,4 +43,16 @@ export const friendLinks: FriendLink[] = [
 		description: "thoughtful one",
 		avatar: "https://www.heavensdoor1.top/assets/profile/avatar.jpg",
 	},
+	{
+		name: "diamond boy",
+		url: "https://blog.stargazer-luciddream.top/",
+		description: "",
+		avatar: "/image/Diamond_boy.webp",
+	},
+	{
+		name: "353",
+		url: "https://www.h2so4.site",
+		description: "叠...",
+		avatar: "/image/353.jpg",
+	},
 ];
