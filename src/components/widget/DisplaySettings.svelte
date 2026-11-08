@@ -2,7 +2,12 @@
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import Icon from "@iconify/svelte";
-import { getDefaultHue, getDefaultLocale, getHue, setHue } from "@utils/setting-utils";
+import {
+	getDefaultHue,
+	getDefaultLocale,
+	getHue,
+	setHue,
+} from "@utils/setting-utils";
 import type { Locale } from "@/types/config";
 
 let hue = getHue();

@@ -1,12 +1,15 @@
 ---
-import type { Locale } from "@/types/config";
-import { friendLinks } from "@/constants/friends";
 import ImageWrapper from "@components/misc/ImageWrapper.astro";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
-import { Icon } from "astro-icon/components";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
-interface Props { locale: Locale }
+import { Icon } from "astro-icon/components";
+import { friendLinks } from "@/constants/friends";
+import type { Locale } from "@/types/config";
+
+interface Props {
+	locale: Locale;
+}
 const { locale } = Astro.props;
 ---
 <MainGridLayout title={i18n(locale, I18nKey.friendLink)} description={i18n(locale, I18nKey.friendLink)} locale={locale}>

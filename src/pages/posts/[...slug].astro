@@ -1,13 +1,13 @@
 ---
-import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
 import ArticlePage from "@components/pages/ArticlePage.astro";
 import { getPostSlug, getSortedPosts } from "@utils/content-utils";
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
 export const getStaticPaths = (async () => {
-    const locale = "en" as const;
-    return (await getSortedPosts(locale)).map((entry) => ({
-        params: { slug: getPostSlug(entry) },
-        props: { entry, locale },
-    }));
+	const locale = "en" as const;
+	return (await getSortedPosts(locale)).map((entry) => ({
+		params: { slug: getPostSlug(entry) },
+		props: { entry, locale },
+	}));
 }) satisfies GetStaticPaths;
 type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 const { entry, locale } = Astro.props;

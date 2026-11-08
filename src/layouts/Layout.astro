@@ -4,6 +4,7 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 
 import ConfigCarrier from "@components/ConfigCarrier.astro";
+import { getHtmlLang } from "@i18n/locales";
 import { profileConfig, siteConfig } from "@/config";
 import type { Locale } from "@/types/config";
 import {
@@ -18,7 +19,6 @@ import {
 } from "../constants/constants";
 import { defaultFavicons } from "../constants/icon";
 import type { Favicon } from "../types/config";
-import { getHtmlLang } from "@i18n/locales";
 import { getHomeUrl, getRssUrl, pathsEqual, url } from "../utils/url-utils";
 import "katex/dist/katex.css";
 

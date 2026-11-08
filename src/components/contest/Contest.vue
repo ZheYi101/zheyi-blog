@@ -221,7 +221,9 @@ const ResScore = computed(
 				: ending4.value === "normal+"
 					? 500
 					: 0) +
-		((ending1.value !== "0" || ending2.value !== "0") && AsaNa.value ? 100 : 0) +
+		((ending1.value !== "0" || ending2.value !== "0") && AsaNa.value
+			? 100
+			: 0) +
 		(ending4.value !== "0" && GunDongXianZu.value ? 50 : 0),
 );
 const QiTa = computed(

@@ -1,12 +1,14 @@
 ---
-import type { Locale } from "@/types/config";
 import ArchivePanel from "@components/ArchivePanel.svelte";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
 import { getSortedPostsList } from "@utils/content-utils";
+import type { Locale } from "@/types/config";
 
-interface Props { locale: Locale }
+interface Props {
+	locale: Locale;
+}
 const { locale } = Astro.props;
 const sortedPostsList = await getSortedPostsList(locale);
 ---

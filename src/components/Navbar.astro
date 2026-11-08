@@ -1,9 +1,9 @@
 ---
+import { getOtherLocale } from "@i18n/locales";
 import { Icon } from "astro-icon/components";
 import { navBarConfig, siteConfig } from "../config";
 import { getLinkPresets } from "../constants/link-presets";
 import { LinkPreset, type Locale, type NavBarLink } from "../types/config";
-import { getOtherLocale } from "@i18n/locales";
 import { getHomeUrl, getLocalizedUrl, url } from "../utils/url-utils";
 import LightDarkSwitch from "./LightDarkSwitch.svelte";
 import Search from "./Search.svelte";

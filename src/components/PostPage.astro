@@ -1,11 +1,14 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import type { Locale } from "@/types/config";
 import { getCategoryKey, getPostSlug } from "@utils/content-utils";
 import { getPostUrlBySlug } from "@utils/url-utils";
+import type { Locale } from "@/types/config";
 import PostCard from "./PostCard.astro";
 
-const { page, locale } = Astro.props as { page: { data: CollectionEntry<"posts">[] }; locale: Locale };
+const { page, locale } = Astro.props as {
+	page: { data: CollectionEntry<"posts">[] };
+	locale: Locale;
+};
 
 let delay = 0;
 const interval = 50;

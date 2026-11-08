@@ -14,7 +14,9 @@ export let sortedPosts: Post[] = [];
 export let locale: Locale = getDefaultLocale();
 
 const params = new URLSearchParams(window.location.search);
-tags = params.has("tag") ? params.getAll("tag").map((tag) => normalizeTagKey(tag)) : [];
+tags = params.has("tag")
+	? params.getAll("tag").map((tag) => normalizeTagKey(tag))
+	: [];
 categories = params.has("category") ? params.getAll("category") : [];
 const uncategorized = params.get("uncategorized");
 
@@ -61,7 +63,8 @@ onMount(async () => {
 
 	if (categories.length > 0) {
 		filteredPosts = filteredPosts.filter(
-			(post) => post.data.categoryKey && categories.includes(post.data.categoryKey),
+			(post) =>
+				post.data.categoryKey && categories.includes(post.data.categoryKey),
 		);
 	}
 

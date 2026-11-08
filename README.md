@@ -110,6 +110,8 @@ In addition to Astro's default support for [GitHub Flavored Markdown](https://gi
 | `pnpm preview`             | Preview your build locally, before deploying        |
 | `pnpm check`               | Run checks for errors in your code                  |
 | `pnpm format`              | Format your code using Biome                        |
+| `pnpm lint`                | Fix formatting, imports, and lint issues using Biome |
+| `pnpm lint:ci`             | Run the same Biome checks as CI without changing files |
 | `pnpm new-post <filename>` | Create a new post                                   |
 | `pnpm astro ...`           | Run CLI commands like `astro add`, `astro check`    |
 | `pnpm astro --help`        | Get help using the Astro CLI                        |

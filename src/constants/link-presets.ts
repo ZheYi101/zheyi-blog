@@ -1,13 +1,16 @@
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
+import { LinkPreset, type Locale, type NavBarLink } from "@/types/config";
 import {
-	type Locale,
-	LinkPreset,
-	type NavBarLink,
-} from "@/types/config";
-import { getAboutUrl, getArchiveUrl, getFriendLinkUrl, getHomeUrl } from "@/utils/url-utils";
+	getAboutUrl,
+	getArchiveUrl,
+	getFriendLinkUrl,
+	getHomeUrl,
+} from "@/utils/url-utils";
 
-export function getLinkPresets(locale: Locale): { [key in LinkPreset]: NavBarLink } {
+export function getLinkPresets(locale: Locale): {
+	[key in LinkPreset]: NavBarLink;
+} {
 	return {
 		[LinkPreset.Home]: {
 			name: i18n(locale, I18nKey.home),

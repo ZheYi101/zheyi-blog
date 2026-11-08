@@ -1,36 +1,44 @@
 ---
+import { type CollectionEntry, render } from "astro:content";
 import path from "node:path";
-import { render, type CollectionEntry } from "astro:content";
-import { Icon } from "astro-icon/components";
-import type { Locale } from "@/types/config";
-import { licenseConfig, profileConfig } from "@/config";
+import ImageWrapper from "@components/misc/ImageWrapper.astro";
 import License from "@components/misc/License.astro";
 import Markdown from "@components/misc/Markdown.astro";
-import ImageWrapper from "@components/misc/ImageWrapper.astro";
 import PostMetadata from "@components/PostMeta.astro";
 import I18nKey from "@i18n/i18nKey";
 import { i18n } from "@i18n/translation";
 import MainGridLayout from "@layouts/MainGridLayout.astro";
-import { getCategoryKey, getPostContentLang, getPostSlug } from "@utils/content-utils";
+import {
+	getCategoryKey,
+	getPostContentLang,
+	getPostSlug,
+} from "@utils/content-utils";
 import { formatDateToYYYYMMDD } from "@utils/date-utils";
 import { getDir, getPostUrlBySlug } from "@utils/url-utils";
+import { Icon } from "astro-icon/components";
+import { licenseConfig, profileConfig } from "@/config";
+import type { Locale } from "@/types/config";
 
 interface Props {
-    entry: CollectionEntry<"posts">;
-    locale: Locale;
+	entry: CollectionEntry<"posts">;
+	locale: Locale;
 }
 const { entry, locale } = Astro.props;
 const { Content, headings, remarkPluginFrontmatter } = await render(entry);
 const contentLang = getPostContentLang(entry);
 const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: entry.data.title,
-    description: entry.data.description || entry.data.title,
-    keywords: entry.data.tags,
-    author: { "@type": "Person", name: profileConfig.name[locale], url: Astro.site },
-    datePublished: formatDateToYYYYMMDD(entry.data.published),
-    inLanguage: contentLang,
+	"@context": "https://schema.org",
+	"@type": "BlogPosting",
+	headline: entry.data.title,
+	description: entry.data.description || entry.data.title,
+	keywords: entry.data.tags,
+	author: {
+		"@type": "Person",
+		name: profileConfig.name[locale],
+		url: Astro.site,
+	},
+	datePublished: formatDateToYYYYMMDD(entry.data.published),
+	inLanguage: contentLang,
 };
 ---
 <MainGridLayout banner={entry.data.image} title={entry.data.title} description={entry.data.description} locale={locale} setOGTypeArticle={true} headings={headings}>
